@@ -17,7 +17,7 @@ module Tumblr
       if response.status == 301
         response.headers['Location']
       else
-        response.body['meta']
+        parse_response_body(response.body)['meta']
       end
     end
 
@@ -61,14 +61,24 @@ module Tumblr
     end
 
     def respond(response)
+      body = parse_response_body(response.body)
       if [201, 200].include?(response.status)
-        response.body['response']
+        body['response']
       else
         # surface the meta alongside response
-        res = response.body['meta'] || {}
-        res.merge! response.body['response'] if response.body['response'].is_a?(Hash)
+        res = body['meta'] || {}
+        res.merge! body['response'] if body['response'].is_a?(Hash)
         res
       end
+    end
+
+    def parse_response_body(body)
+      return body if body.is_a?(Hash)
+      return {} if body.nil? || (body.respond_to?(:empty?) && body.empty?)
+
+      JSON.parse(body)
+    rescue JSON::ParserError
+      {}
     end
 
   end

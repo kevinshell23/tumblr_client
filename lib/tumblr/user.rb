@@ -8,17 +8,19 @@ module Tumblr
     def dashboard(options = {})
       valid_opts = [:limit, :offset, :type, :since_id, :reblog_info, :notes_info]
       validate_options(valid_opts, options)
-      get('v2/user/dashboard', options)
+      get('v2/user/dashboard', **options)
     end
 
     def likes(options = {})
       validate_options([:limit, :offset, :before, :after], options)
-      get('v2/user/likes', options)
+      args = options.empty? ? [{}] : [**options]
+      get('v2/user/likes', *args)
     end
 
     def following(options = {})
       validate_options([:limit, :offset], options)
-      get('v2/user/following', options)
+      args = options.empty? ? [{}] : [**options]
+      get('v2/user/following', *args)
     end
 
     def follow(url)
@@ -45,13 +47,13 @@ module Tumblr
     def add_filtered_content(filtered_strings=nil, options={})
       validate_options([:filtered_content], options)
       options[:filtered_content] ||= filtered_strings
-      post('v2/user/filtered_content', options)
+      post('v2/user/filtered_content', **options)
     end
 
     def delete_filtered_content(filtered_strings, options={})
       validate_options([:filtered_content], options)
       options[:filtered_content] ||= filtered_strings
-      delete('v2/user/filtered_content', options)
+      delete('v2/user/filtered_content', **options)
     end
 
   end

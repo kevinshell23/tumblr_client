@@ -1,4 +1,5 @@
 require 'mime/types'
+require 'faraday/multipart'
 
 module Tumblr
   module Post
